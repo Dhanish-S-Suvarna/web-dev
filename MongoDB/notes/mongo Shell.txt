@@ -1,0 +1,240 @@
+$ mongo
+
+to check the user 
+
+>db.runCommand({connectionStatus: 1})
+--------------------------------------------------
+> show dbs
+admin   0.000GB
+config  0.000GB
+local   0.000GB
+> use ecom
+switched to db ecom
+> show collections
+> db.createCollection('products')
+{ "ok" : 1 }
+> show collections
+products
+> show dbs
+admin   0.000GB
+config  0.000GB
+ecom    0.000GB
+local   0.000GB
+> db.createCollection('users')
+{ "ok" : 1 }
+> show collections
+products
+users
+> db.products.drop()
+true
+> show collections
+users
+> use ecom
+switched to db ecom
+> db.dropDatabase()
+{ "dropped" : "ecom", "ok" : 1 }
+> show dbs
+admin   0.000GB
+config  0.000GB
+local   0.000GB
+
+
+> use ecom
+switched to db ecom
+> db.createCollection('products')
+{ "ok" : 1 }
+> show collection
+uncaught exception: Error: don't know how to show [collection] :
+shellHelper.show@src/mongo/shell/utils.js:1191:11
+shellHelper@src/mongo/shell/utils.js:819:15
+@(shellhelp2):1:1
+> show collections
+products
+> db.products.find()
+> db.product.find()
+> show collections
+products
+> db.products.insertOne({name: 'Keyboard',price: 250})
+{
+        "acknowledged" : true,
+        "insertedId" : ObjectId("60ee8ddba1ec3ac2f06d167b")
+}
+> db.products.find()
+{ "_id" : ObjectId("60ee8ddba1ec3ac2f06d167b"), "name" : "Keyboard", "price" : 250 }
+> db.products.insertOne({name: 'Monitor',price: 300})
+{
+        "acknowledged" : true,
+        "insertedId" : ObjectId("60ee939ea1ec3ac2f06d167c")
+}
+> db.products.find()
+{ "_id" : ObjectId("60ee8ddba1ec3ac2f06d167b"), "name" : "Keyboard", "price" : 250 }
+{ "_id" : ObjectId("60ee939ea1ec3ac2f06d167c"), "name" : "Monitor", "price" : 300 }
+> db.products.find({price: 250})
+{ "_id" : ObjectId("60ee8ddba1ec3ac2f06d167b"), "name" : "Keyboard", "price" : 250 }
+> db.products.find({price: 300})
+{ "_id" : ObjectId("60ee939ea1ec3ac2f06d167c"), "name" : "Monitor", "price" : 300 }
+> db.products.find({price: 350})
+> db.products.insertMany([{name: 'HDMI cable', price:50},{name: 'Card Reader', price: 30}])
+{
+        "acknowledged" : true,
+        "insertedIds" : [
+                ObjectId("60eeab5fa1ec3ac2f06d167f"),
+                ObjectId("60eeab5fa1ec3ac2f06d1680")
+        ]
+}
+> db.products.find()
+{ "_id" : ObjectId("60ee8ddba1ec3ac2f06d167b"), "name" : "Keyboard", "price" : 250 }
+{ "_id" : ObjectId("60ee939ea1ec3ac2f06d167c"), "name" : "Monitor", "price" : 300 }
+{ "_id" : ObjectId("60ee96f8a1ec3ac2f06d167e"), "name" : "Mouse", "price" : "250" }
+{ "_id" : ObjectId("60eeab5fa1ec3ac2f06d167f"), "name" : "HDMI cable", "price" : 50 }
+{ "_id" : ObjectId("60eeab5fa1ec3ac2f06d1680"), "name" : "Card Reader", "price" : 30 }
+> db.products.find().pretty()
+{
+        "_id" : ObjectId("60ee8ddba1ec3ac2f06d167b"),
+        "name" : "Keyboard",
+        "price" : 250
+}
+{
+        "_id" : ObjectId("60ee939ea1ec3ac2f06d167c"),
+        "name" : "Monitor",
+        "price" : 300
+}
+{
+        "_id" : ObjectId("60ee96f8a1ec3ac2f06d167e"),
+        "name" : "Mouse",
+        "price" : "250"
+}
+{
+        "_id" : ObjectId("60eeab5fa1ec3ac2f06d167f"),
+        "name" : "HDMI cable",
+        "price" : 50
+}
+{
+        "_id" : ObjectId("60eeab5fa1ec3ac2f06d1680"),
+        "name" : "Card Reader",
+        "price" : 30
+}
+> db.products.find()
+{ "_id" : ObjectId("60ee8ddba1ec3ac2f06d167b"), "name" : "Keyboard", "price" : 250 }
+{ "_id" : ObjectId("60ee939ea1ec3ac2f06d167c"), "name" : "Monitor", "price" : 300 }
+{ "_id" : ObjectId("60ee96f8a1ec3ac2f06d167e"), "name" : "Mouse", "price" : "250" }
+{ "_id" : ObjectId("60eeab5fa1ec3ac2f06d167f"), "name" : "HDMI cable", "price" : 50 }
+{ "_id" : ObjectId("60eeab5fa1ec3ac2f06d1680"), "name" : "Card Reader", "price" : 30 }
+> db.products.update({_id: ObjectId("60ee96f8a1ec3ac2f06d167e")},{$set: {price: 200}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.products.find()
+{ "_id" : ObjectId("60ee8ddba1ec3ac2f06d167b"), "name" : "Keyboard", "price" : 250 }
+{ "_id" : ObjectId("60ee939ea1ec3ac2f06d167c"), "name" : "Monitor", "price" : 300 }
+{ "_id" : ObjectId("60ee96f8a1ec3ac2f06d167e"), "name" : "Mouse", "price" : 200 }
+{ "_id" : ObjectId("60eeab5fa1ec3ac2f06d167f"), "name" : "HDMI cable", "price" : 50 }
+{ "_id" : ObjectId("60eeab5fa1ec3ac2f06d1680"), "name" : "Card Reader", "price" : 30 }
+> db.products.deleteOne({_id: ObjectId("60ee939ea1ec3ac2f06d167c")})
+{ "acknowledged" : true, "deletedCount" : 1 }
+> db.products.find()
+{ "_id" : ObjectId("60ee8ddba1ec3ac2f06d167b"), "name" : "Keyboard", "price" : 250 }
+{ "_id" : ObjectId("60ee96f8a1ec3ac2f06d167e"), "name" : "Mouse", "price" : 200 }
+{ "_id" : ObjectId("60eeab5fa1ec3ac2f06d167f"), "name" : "HDMI cable", "price" : 50 }
+{ "_id" : ObjectId("60eeab5fa1ec3ac2f06d1680"), "name" : "Card Reader", "price" : 30 }
+> db.products.deleteMany({_id: {$in: [ObjectId("60ee8ddba1ec3ac2f06d167b"),ObjectId("60eeab5fa1ec3ac2f06d1680")]}})
+{ "acknowledged" : true, "deletedCount" : 2 }
+> db.products.find()
+{ "_id" : ObjectId("60ee96f8a1ec3ac2f06d167e"), "name" : "Mouse", "price" : 200 }
+{ "_id" : ObjectId("60eeab5fa1ec3ac2f06d167f"), "name" : "HDMI cable", "price" : 50 }
+
+
+> db.createCollection('reviews')
+{ "ok" : 1 }
+> show collections
+products
+reviews
+> db.products.find()
+{ "_id" : ObjectId("60ee96f8a1ec3ac2f06d167e"), "name" : "Mouse", "price" : 200 }
+{ "_id" : ObjectId("60eeab5fa1ec3ac2f06d167f"), "name" : "HDMI cable", "price" : 50 }
+> db.reviews.insertMany([{text: 'This is Very Good product', stars: 4, productId: ObjectId("60ee96f8a1ec3ac2f06d167e")}, {text: 'This is Very Bad product', stars: 2, productId: ObjectId("60ee96f8a1ec3ac2f06d167e")}])
+{
+        "acknowledged" : true,
+        "insertedIds" : [
+                ObjectId("60eeb1353aa94afdd9a9267a"),
+                ObjectId("60eeb1353aa94afdd9a9267b")
+        ]
+}
+> db.reviews.find()
+{ "_id" : ObjectId("60eeb1353aa94afdd9a9267a"), "text" : "This is Very Good product", "stars" : 4, "productId" : ObjectId("60ee96f8a1ec3ac2f06d167e") }
+{ "_id" : ObjectId("60eeb1353aa94afdd9a9267b"), "text" : "This is Very Bad product", "stars" : 2, "productId" : ObjectId("60ee96f8a1ec3ac2f06d167e") }
+> db.reviews.find().pretty()
+{
+        "_id" : ObjectId("60eeb1353aa94afdd9a9267a"),
+        "text" : "This is Very Good product",
+        "stars" : 4,
+        "productId" : ObjectId("60ee96f8a1ec3ac2f06d167e")
+}
+{
+        "_id" : ObjectId("60eeb1353aa94afdd9a9267b"),
+        "text" : "This is Very Bad product",
+        "stars" : 2,
+        "productId" : ObjectId("60ee96f8a1ec3ac2f06d167e")
+}
+
+> db.products.find()
+{ "_id" : ObjectId("60ee96f8a1ec3ac2f06d167e"), "name" : "Mouse", "price" : 200 }
+{ "_id" : ObjectId("60eeab5fa1ec3ac2f06d167f"), "name" : "HDMI cable", "price" : 50 }
+> db.products.update({_id: ObjectId("60ee96f8a1ec3ac2f06d167e")}, {$set: {reviews: [{text: 'This is Very Good product', stars: 4}, {text: 'This is Very Bad product', stars: 2}]}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.products.find().pretty()
+{
+        "_id" : ObjectId("60ee96f8a1ec3ac2f06d167e"),
+        "name" : "Mouse",
+        "price" : 200,
+        "reviews" : [
+                {
+                        "text" : "This is Very Good product",
+                        "stars" : 4
+                },
+                {
+                        "text" : "This is Very Bad product",
+                        "stars" : 2
+                }
+        ]
+}
+{
+        "_id" : ObjectId("60eeab5fa1ec3ac2f06d167f"),
+        "name" : "HDMI cable",
+        "price" : 50
+}
+> db.products.insertOne({name: "Monitor", category: "computer", price: 599})
+{
+        "acknowledged" : true,
+        "insertedId" : ObjectId("60eeb4553aa94afdd9a9267c")
+}
+> db.products.find().pretty()
+{
+        "_id" : ObjectId("60ee96f8a1ec3ac2f06d167e"),
+        "name" : "Mouse",
+        "price" : 200,
+        "reviews" : [
+                {
+                        "text" : "This is Very Good product",
+                        "stars" : 4
+                },
+                {
+                        "text" : "This is Very Bad product",
+                        "stars" : 2
+                }
+        ]
+}
+{
+        "_id" : ObjectId("60eeab5fa1ec3ac2f06d167f"),
+        "name" : "HDMI cable",
+        "price" : 50
+}
+{
+        "_id" : ObjectId("60eeb4553aa94afdd9a9267c"),
+        "name" : "Monitor",
+        "category" : "computer",
+        "price" : 599
+}
+> db.products.deleteOne({_id: ObjectId("60ee96f8a1ec3ac2f06d167e")})
+{ "acknowledged" : true, "deletedCount" : 1 }
+> db.products.find()
+{ "_id" : ObjectId("60eeab5fa1ec3ac2f06d167f"), "name" : "HDMI cable", "price" : 50 }
+{ "_id" : ObjectId("60eeb4553aa94afdd9a9267c"), "name" : "Monitor", "category" : "computer", "price" : 599 }

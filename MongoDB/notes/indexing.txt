@@ -1,0 +1,232 @@
+In MongoDB indexing is achieved by using B-tree Data Structure
+
+/ ---------------------------------------------------------- /
+
+> show collections
+products
+reviews
+> db.products.find()
+{ "_id" : ObjectId("60eeab5fa1ec3ac2f06d167f"), "name" : "HDMI cable", "price" : 50 }
+{ "_id" : ObjectId("60eeb4553aa94afdd9a9267c"), "name" : "Monitor", "category" : "computer", "price" : 599 }
+{ "_id" : ObjectId("60eeb8ad3aa94afdd9a9267d"), "name" : "USB", "price" : 80 }
+> for(let i=1; i<5000; i++){
+... db.products.insert({name: 'product_'+i, price: i})
+... }
+WriteResult({ "nInserted" : 1 })
+> db.products.find({ name: 'product_2000'})
+{ "_id" : ObjectId("60eebf633aa94afdd9a92e4d"), "name" : "product_2000", "price" : 2000 }
+
+> db.products.find({ name: 'product_2000'}).explain('executionStats')
+{
+        "queryPlanner" : {
+                "plannerVersion" : 1,
+                "namespace" : "ecom.products",
+                "indexFilterSet" : false,
+                "parsedQuery" : {
+                        "name" : {
+                                "$eq" : "product_2000"
+                        }
+                },
+                "winningPlan" : {
+                        "stage" : "COLLSCAN",
+                        "filter" : {
+                                "name" : {
+                                        "$eq" : "product_2000"
+                                }
+                        },
+                        "direction" : "forward"
+                },
+                "rejectedPlans" : [ ]
+        },
+        "executionStats" : {
+                "executionSuccess" : true,
+                "nReturned" : 1,
+                "executionTimeMillis" : 3,
+                "totalKeysExamined" : 0,
+                "totalDocsExamined" : 5002,
+                "executionStages" : {
+                        "stage" : "COLLSCAN",
+                        "filter" : {
+                                "name" : {
+                                        "$eq" : "product_2000"
+                                }
+                        },
+                        "nReturned" : 1,
+                        "executionTimeMillisEstimate" : 0,
+                        "works" : 5004,
+                        "advanced" : 1,
+                        "needTime" : 5002,
+                        "needYield" : 0,
+                        "saveState" : 5,
+                        "restoreState" : 5,
+                        "isEOF" : 1,
+                        "direction" : "forward",
+                        "docsExamined" : 5002
+                }
+        },
+        "serverInfo" : {
+                "host" : "LAPTOP-NVD7TLQT",
+                "port" : 27017,
+                "version" : "4.4.6",
+                "gitVersion" : "72e66213c2c3eab37d9358d5e78ad7f5c1d0d0d7"
+        },
+        "ok" : 1
+}
+
+/------------------ Now add indexes ---------------------------- /
+NOTE: Makes our read/search operation faster, But write will be slow
+      so if our prog does lots of read then all indexes else avoid it 
+
+> db.products.createIndex({ name: 1 })
+{
+        "createdCollectionAutomatically" : false,
+        "numIndexesBefore" : 1,
+        "numIndexesAfter" : 2,
+        "ok" : 1
+}
+> db.products.find({ name: 'product_2000'}).explain('executionStats')
+{
+        "queryPlanner" : {
+                "plannerVersion" : 1,
+                "namespace" : "ecom.products",
+                "indexFilterSet" : false,
+                "parsedQuery" : {
+                        "name" : {
+                                "$eq" : "product_2000"
+                        }
+                },
+                "winningPlan" : {
+                        "stage" : "FETCH",
+                        "inputStage" : {
+                                "stage" : "IXSCAN",
+                                "keyPattern" : {
+                                        "name" : 1
+                                },
+                                "indexName" : "name_1",
+                                "isMultiKey" : false,
+                                "multiKeyPaths" : {
+                                        "name" : [ ]
+                                },
+                                "isUnique" : false,
+                                "isSparse" : false,
+                                "isPartial" : false,
+                                "indexVersion" : 2,
+                                "direction" : "forward",
+                                "indexBounds" : {
+                                        "name" : [
+                                                "[\"product_2000\", \"product_2000\"]"
+                                        ]
+                                }
+                        }
+                },
+                "rejectedPlans" : [ ]
+        },
+        "executionStats" : {
+                "executionSuccess" : true,
+                "nReturned" : 1,
+                "executionTimeMillis" : 0,
+                "totalKeysExamined" : 1,
+                "totalDocsExamined" : 1,
+                "executionStages" : {
+                        "stage" : "FETCH",
+                        "nReturned" : 1,
+                        "executionTimeMillisEstimate" : 0,
+                        "works" : 2,
+                        "advanced" : 1,
+                        "needTime" : 0,
+                        "needYield" : 0,
+                        "saveState" : 0,
+                        "restoreState" : 0,
+                        "isEOF" : 1,
+                        "docsExamined" : 1,
+                        "alreadyHasObj" : 0,
+                        "inputStage" : {
+                                "stage" : "IXSCAN",
+                                "nReturned" : 1,
+                                "executionTimeMillisEstimate" : 0,
+                                "works" : 2,
+                                "advanced" : 1,
+                                "needTime" : 0,
+                                "needYield" : 0,
+                                "saveState" : 0,
+                                "restoreState" : 0,
+                                "isEOF" : 1,
+                                "keyPattern" : {
+                                        "name" : 1
+                                },
+                                "indexName" : "name_1",
+                                "isMultiKey" : false,
+                                "multiKeyPaths" : {
+                                        "name" : [ ]
+                                },
+                                "isUnique" : false,
+                                "isSparse" : false,
+                                "isPartial" : false,
+                                "indexVersion" : 2,
+                                "direction" : "forward",
+                                "indexBounds" : {
+                                        "name" : [
+                                                "[\"product_2000\", \"product_2000\"]"
+                                        ]
+                                },
+                                "keysExamined" : 1,
+                                "seeks" : 1,
+                                "dupsTested" : 0,
+                                "dupsDropped" : 0
+                        }
+                }
+        },
+        "serverInfo" : {
+                "host" : "LAPTOP-NVD7TLQT",
+                "port" : 27017,
+                "version" : "4.4.6",
+                "gitVersion" : "72e66213c2c3eab37d9358d5e78ad7f5c1d0d0d7"
+        },
+        "ok" : 1
+}
+
+/ ------------------------------------------------------ /
+NOTE:
+    Compare the the values of 
+        "executionTimeMillis"
+        "totalDocsExamined"
+    before and after indexing the collections
+/ ------------------------------------------------------ /
+
+Indexing on _id is implemented by mongoDB itself bt default
+Indexing on name is implemented by ous
+
+> db.products.getIndexes()
+[
+        {
+                "v" : 2,
+                "key" : {
+                        "_id" : 1
+                },
+                "name" : "_id_"
+        },
+        {
+                "v" : 2,
+                "key" : {
+                        "name" : 1
+                },
+                "name" : "name_1"
+        }
+]
+
+/ --------------- remove the indexing on the name ------------------ /
+
+> db.products.dropIndex('name_1')
+{ "nIndexesWas" : 2, "ok" : 1 }
+
+/ ------------ Now only default indexing is left ------------------ /
+
+> db.products.getIndexes()
+[ { "v" : 2, "key" : { "_id" : 1 }, "name" : "_id_" } ]
+
+
+/ ------------------------------------------------------------------ /
+NOTE:
+    So always use _id to search the entries in the collection, it will be faster
+    because, indexing on it will present at default
+/ ------------------------------------------------------------------ /

@@ -1,0 +1,38 @@
+> db.products.find()
+{ "_id" : ObjectId("60eeab5fa1ec3ac2f06d167f"), "name" : "HDMI cable", "price" : 50 }
+{ "_id" : ObjectId("60eeb4553aa94afdd9a9267c"), "name" : "Monitor", "category" : "computer", "price" : 599 }
+> db.products.find({name: {$eq: 'HDMI cable'}})
+{ "_id" : ObjectId("60eeab5fa1ec3ac2f06d167f"), "name" : "HDMI cable", "price" : 50 }
+> db.products.insertOne({name: 'USB', price: 80})
+{
+        "acknowledged" : true,
+        "insertedId" : ObjectId("60eeb8ad3aa94afdd9a9267d")
+}
+> db.products.find()
+{ "_id" : ObjectId("60eeab5fa1ec3ac2f06d167f"), "name" : "HDMI cable", "price" : 50 }
+{ "_id" : ObjectId("60eeb4553aa94afdd9a9267c"), "name" : "Monitor", "category" : "computer", "price" : 599 }
+{ "_id" : ObjectId("60eeb8ad3aa94afdd9a9267d"), "name" : "USB", "price" : 80 }
+
+
+> db.products.find({ price: {$gt: 60}})
+{ "_id" : ObjectId("60eeb4553aa94afdd9a9267c"), "name" : "Monitor", "category" : "computer", "price" : 599 }
+{ "_id" : ObjectId("60eeb8ad3aa94afdd9a9267d"), "name" : "USB", "price" : 80 }
+> db.products.find({ price: {$lte: 80}})
+{ "_id" : ObjectId("60eeab5fa1ec3ac2f06d167f"), "name" : "HDMI cable", "price" : 50 }
+{ "_id" : ObjectId("60eeb8ad3aa94afdd9a9267d"), "name" : "USB", "price" : 80 }
+> db.products.find({ price: {$ne: 599}})
+{ "_id" : ObjectId("60eeab5fa1ec3ac2f06d167f"), "name" : "HDMI cable", "price" : 50 }
+{ "_id" : ObjectId("60eeb8ad3aa94afdd9a9267d"), "name" : "USB", "price" : 80 }
+> db.products.find({ $and: [ { price: {$eq: 50} }, {name: {$eq: 'USB'} } ] })
+> db.products.find({ $or: [ { price: {$eq: 50} }, {name: {$eq: 'USB'} } ] })
+{ "_id" : ObjectId("60eeab5fa1ec3ac2f06d167f"), "name" : "HDMI cable", "price" : 50 }
+{ "_id" : ObjectId("60eeb8ad3aa94afdd9a9267d"), "name" : "USB", "price" : 80 }
+> db.products.find({ $and: [ { price: {$eq: 80} }, {name: {$eq: 'USB'} } ] })
+{ "_id" : ObjectId("60eeb8ad3aa94afdd9a9267d"), "name" : "USB", "price" : 80 }
+> db.products.find({ price: { $not: {$eq: 599} } })
+{ "_id" : ObjectId("60eeab5fa1ec3ac2f06d167f"), "name" : "HDMI cable", "price" : 50 }
+{ "_id" : ObjectId("60eeb8ad3aa94afdd9a9267d"), "name" : "USB", "price" : 80 }
+
+
+
+/----------- Refer Documentaion for more Operators ------------------ /
